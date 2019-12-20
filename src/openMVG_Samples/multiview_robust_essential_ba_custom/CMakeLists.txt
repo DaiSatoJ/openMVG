@@ -1,0 +1,12 @@
+
+add_executable(openMVG_sample_multiview_robustEssential_ba_custom robust_essential_ba_custom.cpp)
+target_link_libraries(openMVG_sample_multiview_robustEssential_ba_custom
+  openMVG_image
+  openMVG_features
+  openMVG_matching
+  openMVG_system
+  openMVG_sfm
+  ${STLPLUS_LIBRARY})
+target_compile_definitions(openMVG_sample_multiview_robustEssential_ba_custom
+  PRIVATE -DTHIS_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
+set_property(TARGET openMVG_sample_multiview_robustEssential_ba_custom PROPERTY FOLDER OpenMVG/Samples)
