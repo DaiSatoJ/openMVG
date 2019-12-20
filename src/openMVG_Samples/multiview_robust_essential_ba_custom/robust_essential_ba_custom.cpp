@@ -290,58 +290,41 @@ int main(int argc, char **argv)
       of << t(0) << std::endl << t(1) << std::endl << t(2) << std::endl;
       of.close();
     }
-    { /* output X */
-      std::string filename = sOutDir + "\\X_" + sOutPrefix + ".txt";
-      std::ofstream of(filename);
-      for (int i = 0; i < tiny_scene.structure.size(); ++i) {
-        Vec3 X = tiny_scene.structure[i].X;
-        X = R1 * X + t1;
-        of << X(0) << " " << X(1) << " " << X(2) << std::endl;
+
+    std::ofstream of_X(sOutDir + "\\X_" + sOutPrefix + ".txt");
+    std::ofstream of_x1(sOutDir + "\\x1_" + sOutPrefix + ".txt");
+    std::ofstream of_x2(sOutDir + "\\x2_" + sOutPrefix + ".txt");
+    std::ofstream of_desc1(sOutDir + "\\desc1_" + sOutPrefix + ".txt");
+    std::ofstream of_desc2(sOutDir + "\\desc2_" + sOutPrefix + ".txt");
+    for (Landmarks::const_iterator itr = tiny_scene.structure.cbegin();
+      itr != tiny_scene.structure.cend(); ++itr)
+    {
+      Vec3 X = itr->second.X;
+      Vec2 x1 = itr->second.obs.at(0).x;
+      Vec2 x2 = itr->second.obs.at(1).x;
+      const SIFT_Regions::DescriptorT &desc1
+        = regionsL->Descriptors()[vec_PutativeMatches[relativePose_info.vec_inliers[itr->first]].i_];
+      const SIFT_Regions::DescriptorT &desc2
+        = regionsR->Descriptors()[vec_PutativeMatches[relativePose_info.vec_inliers[itr->first]].j_];
+
+      X = R1 * X + t1;
+      of_X << X(0) << " " << X(1) << " " << X(2) << std::endl;
+      of_x1 << x1(0) << " " << x1(1) << std::endl;
+      of_x2 << x2(0) << " " << x2(1) << std::endl;
+      for (int i = 0; i < desc1.size(); ++i) {
+        of_desc1 << int(desc1(i)) << " ";
       }
-      of.close();
-    }
-    { /* output x1 */
-      std::string filename = sOutDir + "\\x1_" + sOutPrefix + ".txt";
-      std::ofstream of(filename);
-      for (int i = 0; i < tiny_scene.structure.size(); ++i) {
-        Vec2 x1 = tiny_scene.structure[i].obs[0].x;
-        of << x1(0) << " " << x1(1) << std::endl;
+      of_desc1 << std::endl;
+      for (int i = 0; i < desc2.size(); ++i) {
+        of_desc2 << int(desc2(i)) << " ";
       }
-      of.close();
+      of_desc2 << std::endl;
     }
-    { /* output x2 */
-      std::string filename = sOutDir + "\\x2_" + sOutPrefix + ".txt";
-      std::ofstream of(filename);
-      for (int i = 0; i < tiny_scene.structure.size(); ++i) {
-        Vec2 x2 = tiny_scene.structure[i].obs[1].x;
-        of << x2(0) << " " << x2(1) << std::endl;
-      }
-      of.close();
-    }
-    { /* output desc1 */
-      std::string filename = sOutDir + "\\desc1_" + sOutPrefix + ".txt";
-      std::ofstream of(filename);
-      for (int i = 0; i < relativePose_info.vec_inliers.size(); ++i) {
-        const SIFT_Regions::DescriptorT &desc = regionsL->Descriptors()[vec_PutativeMatches[relativePose_info.vec_inliers[i]].i_];
-        for (int j = 0; j < desc.size(); ++j) {
-          of << int(desc(j)) << " ";
-        }
-        of << std::endl;
-      }
-      of.close();
-    }
-    { /* output desc2 */
-      std::string filename = sOutDir + "\\desc2_" + sOutPrefix + ".txt";
-      std::ofstream of(filename);
-      for (int i = 0; i < relativePose_info.vec_inliers.size(); ++i) {
-        const SIFT_Regions::DescriptorT &desc = regionsR->Descriptors()[vec_PutativeMatches[relativePose_info.vec_inliers[i]].j_];
-        for (int j = 0; j < desc.size(); ++j) {
-          of << int(desc(j)) << " ";
-        }
-        of << std::endl;
-      }
-      of.close();
-    }
+    of_X.close();
+    of_x1.close();
+    of_x2.close();
+    of_desc1.close();
+    of_desc2.close();
     
     Save(tiny_scene, sOutDir + "\\EssentialGeometry_refined_" + sOutPrefix + "_.ply", ESfM_Data(ALL));
   }
