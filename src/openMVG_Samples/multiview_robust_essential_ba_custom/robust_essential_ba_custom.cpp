@@ -208,10 +208,6 @@ int main(int argc, char **argv)
     // invalid points that do not respect cheirality are discarded (removed
     //  from the list of inliers).
 
-    std::cout << "Which BA do you want ?\n"
-      << "\t 1: Refine [X],[f,ppx,ppy,R|t] (individual cameras)\n"
-      << "\t 2: Refine [X],[R|t], shared [f, ppx, ppy]\n"
-      << "\t 3: Refine [X],[R|t], shared brown K3 distortion model [f,ppx,ppy,k1,k2,k3]\n" << std::endl;
     int iBAType = 2;
     const bool bSharedIntrinsic = (iBAType == 2 || iBAType == 3) ? true : false;
 
@@ -319,6 +315,30 @@ int main(int argc, char **argv)
       for (int i = 0; i < tiny_scene.structure.size(); ++i) {
         Vec2 x2 = tiny_scene.structure[i].obs[1].x;
         of << x2(0) << " " << x2(1) << std::endl;
+      }
+      of.close();
+    }
+    { /* output desc1 */
+      std::string filename = sOutDir + "\\desc1_" + sOutPrefix + ".txt";
+      std::ofstream of(filename);
+      for (int i = 0; i < relativePose_info.vec_inliers.size(); ++i) {
+        const SIFT_Regions::DescriptorT &desc = regionsL->Descriptors()[vec_PutativeMatches[relativePose_info.vec_inliers[i]].i_];
+        for (int j = 0; j < desc.size(); ++j) {
+          of << int(desc(j)) << " ";
+        }
+        of << std::endl;
+      }
+      of.close();
+    }
+    { /* output desc2 */
+      std::string filename = sOutDir + "\\desc2_" + sOutPrefix + ".txt";
+      std::ofstream of(filename);
+      for (int i = 0; i < relativePose_info.vec_inliers.size(); ++i) {
+        const SIFT_Regions::DescriptorT &desc = regionsR->Descriptors()[vec_PutativeMatches[relativePose_info.vec_inliers[i]].j_];
+        for (int j = 0; j < desc.size(); ++j) {
+          of << int(desc(j)) << " ";
+        }
+        of << std::endl;
       }
       of.close();
     }
