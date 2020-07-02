@@ -10,7 +10,6 @@
 #define OPENMVG_FEATURES_FEATURE_HPP
 
 #include <algorithm>
-#include <iostream>
 #include <iterator>
 #include <fstream>
 #include <string>
@@ -186,7 +185,6 @@ void PointsToMat(
   Mat& m)
 {
   m.resize(2, vec_feats.size());
-  using ValueT = typename FeaturesT::value_type; // Container type
 
   size_t i = 0;
   for (const auto &feat : vec_feats)
